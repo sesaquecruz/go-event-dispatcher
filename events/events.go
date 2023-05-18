@@ -3,9 +3,12 @@ package events
 
 import "context"
 
+// Event name type
+type EventName string
+
 // Event interface.
 type Event interface {
-	Name() string
+	Name() EventName
 	Payload() any
 }
 
@@ -16,9 +19,9 @@ type Handler interface {
 
 // Event Dispatcher interface.
 type Dispatcher interface {
-	Register(event Event, handler Handler) error
-	Remove(event Event, handler Handler) error
-	Has(event Event, handler Handler) bool
+	Register(event EventName, handler Handler) error
+	Remove(event EventName, handler Handler) error
+	Has(event EventName, handler Handler) bool
 	Dispatch(ctx context.Context, event Event) error
 	Clear()
 }

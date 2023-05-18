@@ -14,21 +14,21 @@ var (
 
 // Event Dispatcher implementation.
 type EventDispatcher struct {
-	handlers map[string][]Handler
+	handlers map[EventName][]Handler
 }
 
 // Create a new Event Dispatcher.
 func NewEventDispatcher() *EventDispatcher {
 	return &EventDispatcher{
-		handlers: make(map[string][]Handler),
+		handlers: make(map[EventName][]Handler),
 	}
 }
 
 // Register an event and its handlers.
 // An event can have several handlers.
 // Return an error if handler already registered, or nil otherwise.
-func (d *EventDispatcher) Register(event Event, handler Handler) error {
-	if handlers, ok := d.handlers[event.Name()]; ok {
+func (d *EventDispatcher) Register(event EventName, handler Handler) error {
+	if handlers, ok := d.handlers[event]; ok {
 		for _, h := range handlers {
 			if h == handler {
 				return ErrorHandlerAlreadyRegistered
@@ -36,18 +36,18 @@ func (d *EventDispatcher) Register(event Event, handler Handler) error {
 		}
 	}
 
-	d.handlers[event.Name()] = append(d.handlers[event.Name()], handler)
+	d.handlers[event] = append(d.handlers[event], handler)
 	return nil
 }
 
 // Remove a specific handler for an event.
 // In the case where an event has multiple handlers, each handler must be removed individually.
 // Return an error if event or handler are not registered, or nil otherwise.
-func (d *EventDispatcher) Remove(event Event, handler Handler) error {
-	if handlers, ok := d.handlers[event.Name()]; ok {
+func (d *EventDispatcher) Remove(event EventName, handler Handler) error {
+	if handlers, ok := d.handlers[event]; ok {
 		for i, h := range handlers {
 			if h == handler {
-				d.handlers[event.Name()] = append(handlers[:i], handlers[i+1:]...)
+				d.handlers[event] = append(handlers[:i], handlers[i+1:]...)
 				return nil
 			}
 		}
@@ -59,8 +59,8 @@ func (d *EventDispatcher) Remove(event Event, handler Handler) error {
 }
 
 // Return true if an event has a specific handler, or false otherwise.
-func (d *EventDispatcher) Has(event Event, handler Handler) bool {
-	if handlers, ok := d.handlers[event.Name()]; ok {
+func (d *EventDispatcher) Has(event EventName, handler Handler) bool {
+	if handlers, ok := d.handlers[event]; ok {
 		for _, h := range handlers {
 			if h == handler {
 				return true
@@ -114,5 +114,5 @@ func (d *EventDispatcher) Dispatch(ctx context.Context, event Event) []error {
 
 // Remove all events and its handlers.
 func (d *EventDispatcher) Clear() {
-	d.handlers = make(map[string][]Handler)
+	d.handlers = make(map[EventName][]Handler)
 }

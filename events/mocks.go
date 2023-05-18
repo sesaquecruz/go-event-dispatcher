@@ -33,10 +33,10 @@ func (m *MockEvent) EXPECT() *MockEventMockRecorder {
 }
 
 // Name mocks base method.
-func (m *MockEvent) Name() string {
+func (m *MockEvent) Name() EventName {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Name")
-	ret0, _ := ret[0].(string)
+	ret0, _ := ret[0].(EventName)
 	return ret0
 }
 
@@ -147,7 +147,7 @@ func (mr *MockDispatcherMockRecorder) Dispatch(ctx, event interface{}) *gomock.C
 }
 
 // Has mocks base method.
-func (m *MockDispatcher) Has(event Event, handler Handler) bool {
+func (m *MockDispatcher) Has(event EventName, handler Handler) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Has", event, handler)
 	ret0, _ := ret[0].(bool)
@@ -161,7 +161,7 @@ func (mr *MockDispatcherMockRecorder) Has(event, handler interface{}) *gomock.Ca
 }
 
 // Register mocks base method.
-func (m *MockDispatcher) Register(event Event, handler Handler) error {
+func (m *MockDispatcher) Register(event EventName, handler Handler) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Register", event, handler)
 	ret0, _ := ret[0].(error)
@@ -175,7 +175,7 @@ func (mr *MockDispatcherMockRecorder) Register(event, handler interface{}) *gomo
 }
 
 // Remove mocks base method.
-func (m *MockDispatcher) Remove(event Event, handler Handler) error {
+func (m *MockDispatcher) Remove(event EventName, handler Handler) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Remove", event, handler)
 	ret0, _ := ret[0].(error)
