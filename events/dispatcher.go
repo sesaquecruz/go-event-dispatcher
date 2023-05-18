@@ -12,16 +12,21 @@ var (
 	ErrorHandlerAlreadyRegistered = errors.New("handler already registered")
 )
 
+// Event Dispatcher implementation.
 type EventDispatcher struct {
 	handlers map[string][]Handler
 }
 
+// Create a new Event Dispatcher.
 func NewEventDispatcher() *EventDispatcher {
 	return &EventDispatcher{
 		handlers: make(map[string][]Handler),
 	}
 }
 
+// Register an event and its handlers.
+// An event can have several handlers.
+// Return an error if handler already registered, or nil otherwise.
 func (d *EventDispatcher) Register(event Event, handler Handler) error {
 	if handlers, ok := d.handlers[event.Name()]; ok {
 		for _, h := range handlers {
@@ -35,6 +40,9 @@ func (d *EventDispatcher) Register(event Event, handler Handler) error {
 	return nil
 }
 
+// Remove a specific handler for an event.
+// In the case where an event has multiple handlers, each handler must be removed individually.
+// Return an error if event or handler are not registered, or nil otherwise.
 func (d *EventDispatcher) Remove(event Event, handler Handler) error {
 	if handlers, ok := d.handlers[event.Name()]; ok {
 		for i, h := range handlers {
@@ -50,6 +58,7 @@ func (d *EventDispatcher) Remove(event Event, handler Handler) error {
 	return ErrorEventNotRegistered
 }
 
+// Return true if an event has a specific handler, or false otherwise.
 func (d *EventDispatcher) Has(event Event, handler Handler) bool {
 	if handlers, ok := d.handlers[event.Name()]; ok {
 		for _, h := range handlers {
@@ -62,6 +71,9 @@ func (d *EventDispatcher) Has(event Event, handler Handler) bool {
 	return false
 }
 
+// Dispatch all handlers of a specific event.
+// Each handler registered to 'event' is called with 'ctx' and 'event'.
+// Return an array with errors of each handler, or nil otherwise.
 func (d *EventDispatcher) Dispatch(ctx context.Context, event Event) []error {
 	if handlers, ok := d.handlers[event.Name()]; ok {
 		ch := make(chan error, len(handlers))
@@ -100,6 +112,7 @@ func (d *EventDispatcher) Dispatch(ctx context.Context, event Event) []error {
 	return []error{ErrorEventNotRegistered}
 }
 
+// Remove all events and its handlers.
 func (d *EventDispatcher) Clear() {
 	d.handlers = make(map[string][]Handler)
 }
