@@ -30,11 +30,11 @@ type Event interface {
 ```
 // An event example
 type InvoiceEvent struct {
-	name    EventName
+	name    events.EventName
 	payload InvoicePayload
 }
 
-func (e *InvoiceEvent) Name() EventName {
+func (e *InvoiceEvent) Name() events.EventName {
 	return e.name
 }
 
@@ -46,11 +46,11 @@ func (e *InvoiceEvent) Payload() any {
 ```
 // An event example
 type OrderEvent struct {
-	name    EventName
+	name    events.EventName
 	payload OrderPayload
 }
 
-func (e *OrderEvent) Name() EventName {
+func (e *OrderEvent) Name() events.EventName {
 	return e.name
 }
 
@@ -69,12 +69,12 @@ type Handler interface {
 
 ```
 // A handler example
-type DeliveryHandler struct {
-	// Communication channel with delivery system
+type SaleHandler struct {
+	// Communication channel with sale system
 	// ...
 }
 
-func (h *DeliveryHandler) Handle(ctx context.Context, event Event) error {
+func (h *SaleHandler) Handle(ctx context.Context, event events.Event) error {
 	// Sending message implementation
 	// ...
 }
@@ -82,12 +82,12 @@ func (h *DeliveryHandler) Handle(ctx context.Context, event Event) error {
 
 ```
 // A handler example
-type SaleHandler struct {
-	// Communication channel with sale system
+type DeliveryHandler struct {
+	// Communication channel with delivery system
 	// ...
 }
 
-func (h *SaleHandler) Handle(ctx context.Context, event Event) error {
+func (h *DeliveryHandler) Handle(ctx context.Context, event events.Event) error {
 	// Sending message implementation
 	// ...
 }
@@ -97,15 +97,15 @@ func (h *SaleHandler) Handle(ctx context.Context, event Event) error {
 
 ```
 func main() {
-	// Create names (event types), handlers, events, and contexts
+	// Create event names (types), events, handlers, and contexts
 	// ...
 	
 	dispatcher := events.NewEventDispatcher()
 
 	dispatcher.Register(invoiceEventType, saleHandler)
 
-	dispatcher.Register(orderEventType, deliveryHandler)
 	dispatcher.Register(orderEventType, saleHandler)
+	dispatcher.Register(orderEventType, deliveryHandler)
 
 	dispatcher.Dispatch(ctx, invoiceEvent)
 	dispatcher.Dispatch(ctx, orderEvent)
